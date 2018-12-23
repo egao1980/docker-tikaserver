@@ -1,7 +1,7 @@
 FROM ubuntu:latest
-MAINTAINER david@logicalspark.com
+MAINTAINER egao1980@gmail.com
 
-ENV TIKA_VERSION 1.19.1
+ENV TIKA_VERSION 1.20
 ENV TIKA_SERVER_URL https://www.apache.org/dist/tika/tika-server-$TIKA_VERSION.jar
 
 RUN	apt-get update \
@@ -14,8 +14,9 @@ RUN	apt-get update \
 		| awk '/"path_info": / { pi=$2; }; /"preferred":/ { pref=$2; }; END { print pref " " pi; };' \
 		| sed -r -e 's/^"//; s/",$//; s/" "//') \
 	&& echo "Nearest mirror: $NEAREST_TIKA_SERVER_URL" \
-	&& curl -sSL "$NEAREST_TIKA_SERVER_URL" -o /tika-server-${TIKA_VERSION}.jar \
+	&& curl -sSL "$NEAREST_TIKA_SERVER_URL" -o /tika-server.jar \
 	&& apt-get clean -y && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
 
 EXPOSE 9998
-ENTRYPOINT java -jar /tika-server-${TIKA_VERSION}.jar -h 0.0.0.0
+ENTRYPOINT ["java", "-jar", "/tika-server.jar", "-h", "0.0.0.0"]
+CMD []
